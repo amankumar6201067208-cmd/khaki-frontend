@@ -1,0 +1,121 @@
+import strapi from "../../api/strapi";
+
+import { STRAPI_BASE_URL } from "../../api/strapi";
+
+const formatTime = (time) => {
+  if (!time) return "";
+
+  const date = new Date(`1970-01-01T${time}`);
+
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
+
+const formatTrip = (trip) => {
+  const featureImage = trip.featureImage
+    ? STRAPI_BASE_URL + trip.featureImage.url
+    : "";
+
+  const images = trip.Images?.map((img) => STRAPI_BASE_URL + img.url) || [];
+
+  const highlights = trip.highlight?.map((h) => h.Text) || [];
+
+  const startingPoint = trip.startingPoint
+    ? {
+        title: trip.startingPoint.title,
+        location_name: trip.startingPoint.location_name,
+        location_address: trip.startingPoint.location_address,
+      }
+    : null;
+
+  const schedule =
+    trip.GroupTourBookingDetails?.map((item) => ({
+      date: item.Date,
+
+      slots:
+        item.Slots?.map((slot) => ({
+          time: formatTime(slot.Time),
+          availableSeats: Number(slot.availableSeats),
+        })) || [],
+    })) || [];
+
+  const privateConfig = trip.BookingSlots?.length
+    ? {
+        durationHours: trip.BookingSlots[0].TourDuraion,
+
+        startSlots:
+          trip.BookingSlots[0].BokingSlots?.map((slot) =>
+            formatTime(slot.StartTime),
+          ) || [],
+
+        endSlots:
+          trip.BookingSlots[0].BokingSlots?.map((slot) =>
+            formatTime(slot.EndTime),
+          ) || [],
+
+        pricing:
+          trip.BookingSlots[0].PersonPricing?.reduce((acc, item) => {
+            acc[item.People] = Number(item.Price);
+            return acc;
+          }, {}) || {},
+      }
+    : null;
+
+  return {
+    id: trip.id,
+
+    title: trip.Title,
+    slug: trip.Slug,
+
+    duration: trip.Duration,
+    distance: trip.Distance,
+
+    price: trip.Price,
+    priceType: trip.priceType,
+
+    tag: trip.Tag,
+
+    category: trip.tripCategory,
+
+    tourType: trip.tripType === "Group Tour" ? "group" : "private",
+
+    publishDate: trip.publishDate,
+
+    featureImage,
+
+    images,
+
+    description: trip.Description,
+
+    note: trip.Note,
+
+    highlights,
+
+    startingPoint,
+
+    schedule,
+
+    privateConfig,
+  };
+};
+
+export const getTrips = async () => {
+  const res = await strapi.get(
+    "/trips?populate[featureImage]=true&populate[Images]=true&populate[highlight]=true&populate[startingPoint]=true&populate[GroupTourBookingDetails][populate]=*&populate[BookingSlots][populate]=*"
+  );
+
+  return res.data.data.map((trip) => formatTrip(trip));
+};
+
+export const getTripBySlug = async (slug) => {
+  const res = await strapi.get(
+    `/trips?filters[Slug][$eq]=${slug}&populate[featureImage]=true&populate[Images]=true&populate[highlight]=true&populate[startingPoint]=true&populate[GroupTourBookingDetails][populate]=*&populate[BookingSlots][populate]=*`
+  );
+
+  if (!res.data.data.length) return null;
+
+  return formatTrip(res.data.data[0]);
+};

@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+
+*{
+    font-family: "Roboto Condensed", Sans-serif;
+}
+
+.compass-arrow{
+animation: pendulum 1s ease-in-out infinite alternate;
+
+}
+@keyframes pendulum {
+  0% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes BunderRoomModelIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+
+.animate-modal {
+  animation: modalIn 0.3s ease-out;
+}
+
+.animate-BunderRoomModel {
+  animation: BunderRoomModelIn 0.3s ease-out;
+}
+
+.input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #e4572e;
+  padding: 8px 4px;
+  outline: none;
+}
+
+.requestformanchor a{
+  color: #e4572e;
+}
+
+.rdp-month{
+  font-size: 18px;
+}
+
+.rdp-month_grid{
+  width: 350px;
+  height: 270px;
+}
+
+.rdp-root {
+   --rdp-accent-color: #e4572e !important;
+}
+
+@media(max-width:778px){
+  .navbar-mobile{
+  background: url(/src/assets/Background/snow2.png);
+  box-shadow: 0 4px 6px -1px #0000001a;
+ }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -90%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
