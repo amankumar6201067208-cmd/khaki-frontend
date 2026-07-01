@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { privateTourSchema } from "./privateTourSchema";
 import { getNames } from "country-list";
 import Modal from "../Modal";
+import { STRAPI_BASE_URL } from "../../api/strapi";
 // import ReCAPTCHA from "react-google-recaptcha";
 
 const countries = getNames();
@@ -103,7 +104,7 @@ const PrivateTourRequestForm = ({ tour }) => {
       setLoading(true);
 
       const res = await fetch(
-        "http://localhost:1337/api/private-tour-bookings",
+        `${STRAPI_BASE_URL}/api/private-tour-bookings`,
         {
           method: "POST",
           headers: {

@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Modal from "../../Components/KhakiLab/BunderRoomModel";
 import TermsConditionsModal from "../Foundation/TermsConditionsModal";
 import { donationSchema } from "./donationSchema";
+import { STRAPI_BASE_URL } from "../../api/strapi";
 // import ReCAPTCHA from "react-google-recaptcha";
 
 const DonationForm = () => {
@@ -21,7 +22,7 @@ const DonationForm = () => {
  const onSubmit = async (data) => {
   try {
     // STEP 1 — Create donation
-    const res = await fetch("http://localhost:1337/api/donation/create", {
+    const res = await fetch(`${STRAPI_BASE_URL}/api/donation/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +38,7 @@ const DonationForm = () => {
 
     // STEP 2 — Create payment
     const paymentRes = await fetch(
-      "http://localhost:1337/api/donation-payment/create",
+      `${STRAPI_BASE_URL}/api/donation-payment/create`,
       {
         method: "POST",
         headers: {

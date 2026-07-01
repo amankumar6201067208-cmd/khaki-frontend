@@ -5,6 +5,7 @@ import { useState } from "react";
 import { checkoutSchema } from "../Components/checkoutSchema";
 import KhakiLabModel from "../Components/KhakiLab/BunderRoomModel";
 import { getNames } from "country-list";
+import { STRAPI_BASE_URL } from "../api/strapi";
 
 const countries = getNames();
 
@@ -110,7 +111,7 @@ const Checkout = () => {
       };
 
       const bookingRes = await fetch(
-        "http://localhost:1337/api/booking/create",
+        `${STRAPI_BASE_URL}/api/booking/create`,
         {
           method: "POST",
           headers: {
@@ -139,7 +140,7 @@ const Checkout = () => {
       };
 
       const paymentRes = await fetch(
-        "http://localhost:1337/api/payment/create",
+        `${STRAPI_BASE_URL}/api/payment/create`,
         {
           method: "POST",
           headers: {

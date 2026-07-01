@@ -2,13 +2,21 @@ import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState, useMemo } from "react";
 import { publicWalkBookingSchema } from "./publicWalkBookingSchema";
+import { STRAPI_BASE_URL } from "../../api/strapi";
 
-const BACKEND_URL = "http://localhost:1337";
+const BACKEND_URL = STRAPI_BASE_URL;
+
+// A brand-new extra ticket: only a category is needed (defaults to general).
+const newExtraTicket = () => ({
+  name: "",
+  email: "",
+  phone: "",
+  category: "general",
+});
 
 const PublicEventBookingForm = ({ tour, selectedSlot }) => {
   const availableSeats = selectedSlot?.availableSeats || 0;
 
-  const [lockedIndex, setLockedIndex] = useState(0);
   const [limitError, setLimitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -16,21 +24,24 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     register,
     handleSubmit,
     control,
-    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(publicWalkBookingSchema),
     mode: "onChange",
     defaultValues: {
       participants: [{ name: "", email: "", phone: "", category: "" }],
+      acceptedTerms: true, // events have no separate terms gate
     },
   });
 
-  const { fields, append } = useFieldArray({ control, name: "participants" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "participants",
+  });
 
   const participants = useWatch({ control, name: "participants" });
 
-  // ─── Total amount ──────────────────────────────────────────────────────────
+  // ─── Total amount (flat price per ticket; events have no discount) ──────────
   const totalAmount = useMemo(() => {
     if (!participants || participants.length === 0) return 0;
     return participants.reduce((total, p) => {
@@ -39,7 +50,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     }, 0);
   }, [participants, tour.price]);
 
-  // ─── Participant validation ────────────────────────────────────────────────
+  // ─── Primary participant validation ────────────────────────────────────────
   const isParticipantValid = (index) => {
     const p = participants?.[index];
     return (
@@ -48,16 +59,23 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     );
   };
 
-  // ─── Add participant ──────────────────────────────────────────────────────
-  const handleAddParticipant = () => {
-    if (!isParticipantValid(lockedIndex)) return;
-    if (fields.length >= availableSeats) {
-      setLimitError("You have reached the maximum available seats.");
-      return;
+  // ─── Ticket quantity ───────────────────────────────────────────────────────
+  const ticketCount = fields.length;
+
+  const setTickets = (next) => {
+    if (availableSeats < 1) return;
+    const target = Math.max(1, Math.min(next, availableSeats));
+    const current = fields.length;
+
+    if (target > current) {
+      const toAdd = Array.from({ length: target - current }, newExtraTicket);
+      append(toAdd);
+      setLimitError("");
+    } else if (target < current) {
+      const removeIdx = [];
+      for (let i = target; i < current; i++) removeIdx.push(i);
+      remove(removeIdx);
     }
-    setLimitError("");
-    setLockedIndex((prev) => prev + 1);
-    append({ name: "", email: "", phone: "", category: "" });
   };
 
   // ─── PayU form submit ─────────────────────────────────────────────────────
@@ -94,85 +112,86 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
 
   // ─── Main submit ──────────────────────────────────────────────────────────
   const onSubmit = async (data) => {
-  if (!isParticipantValid(0)) return;
+    if (!isParticipantValid(0)) return;
 
-  setIsSubmitting(true);
-
-  try {
-    const firstParticipant = data.participants[0];
-
-    const bookingPayload = {
-      tourSlug: tour.slug.toLowerCase(),
-      date: selectedSlot?.date,
-      slot: selectedSlot?.time,
-      tickets: data.participants.length,
-      totalAmount,
-
-      contact: {
-        name: firstParticipant.name,
-        email: firstParticipant.email,
-        phone: firstParticipant.phone,
-      },
-
-      passengers: data.participants,
-      tourTitle: tour.title,
-      startingPoint: tour.startingPoint?.title,
-    };
-
-    console.log("BOOKING PAYLOAD →", bookingPayload);
-
-    const bookingRes = await fetch(
-      `${BACKEND_URL}/api/public-booking/create`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookingPayload),
-      }
-    );
-
-    const bookingData = await bookingRes.json();
-
-    console.log("BOOKING RESPONSE →", bookingData);
-
-    if (!bookingData?.bookingId) {
-      throw new Error("Booking creation failed");
-    }
-
-    // FREE CASE
-    if (bookingData.isFree) {
-      window.location.href = `/thank-you?bookingId=${bookingData.bookingId}&status=confirmed&free=true`;
+    if (data.participants.length > availableSeats) {
+      setLimitError("Seat limit exceeded");
       return;
     }
 
-    // PAID CASE
-    const paymentRes = await fetch(`${BACKEND_URL}/api/payment/create`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: Number(totalAmount).toFixed(2),
-        firstname: firstParticipant.name,
-        email: firstParticipant.email,
-        phone: firstParticipant.phone,
-        productinfo: tour.title,
-        bookingId: bookingData.bookingId,
-      }),
-    });
+    setIsSubmitting(true);
 
-    const paymentData = await paymentRes.json();
+    try {
+      const firstParticipant = data.participants[0];
 
-    if (!paymentData?.hash) {
-      throw new Error("Payment initialization failed");
+      const bookingPayload = {
+        tourSlug: tour.slug.toLowerCase(),
+        date: selectedSlot?.date,
+        slot: selectedSlot?.time,
+        tickets: data.participants.length,
+        totalAmount,
+
+        contact: {
+          name: firstParticipant.name,
+          email: firstParticipant.email,
+          phone: firstParticipant.phone,
+        },
+
+        passengers: data.participants,
+        tourTitle: tour.title,
+        startingPoint: tour.startingPoint?.title,
+      };
+
+      const bookingRes = await fetch(
+        `${BACKEND_URL}/api/public-booking/create`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bookingPayload),
+        }
+      );
+
+      const bookingData = await bookingRes.json();
+
+      if (!bookingData?.bookingId) {
+        throw new Error("Booking creation failed");
+      }
+
+      // FREE CASE
+      if (bookingData.isFree) {
+        window.location.href = `/thank-you?bookingId=${bookingData.bookingId}&status=confirmed&free=true`;
+        return;
+      }
+
+      // PAID CASE
+      const paymentRes = await fetch(`${BACKEND_URL}/api/payment/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Number(totalAmount).toFixed(2),
+          firstname: firstParticipant.name,
+          email: firstParticipant.email,
+          phone: firstParticipant.phone,
+          productinfo: tour.title,
+          bookingId: bookingData.bookingId,
+        }),
+      });
+
+      const paymentData = await paymentRes.json();
+
+      if (!paymentData?.hash) {
+        throw new Error("Payment initialization failed");
+      }
+
+      payWithPayU(paymentData);
+
+    } catch (error) {
+      console.error("Booking Error:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    payWithPayU(paymentData);
-
-  } catch (error) {
-    console.error("Booking Error:", error);
-    alert("Something went wrong. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -181,34 +200,119 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
         Available Seats: {availableSeats}
       </p>
 
+      {/* TICKET QUANTITY SELECTOR */}
+      <div className="flex items-center gap-4">
+        <span className="font-semibold text-[#DB4D27]">Number of Tickets:</span>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setTickets(ticketCount - 1)}
+            disabled={ticketCount <= 1}
+            className={`w-9 h-9 rounded-full border text-xl leading-none flex items-center justify-center transition
+              ${
+                ticketCount <= 1
+                  ? "border-gray-300 text-gray-300 cursor-not-allowed"
+                  : "border-[#DB4D27] text-[#DB4D27] hover:bg-[#DB4D27] hover:text-white cursor-pointer"
+              }`}
+            aria-label="Decrease tickets"
+          >
+            −
+          </button>
+          <span className="w-8 text-center text-lg font-bold">{ticketCount}</span>
+          <button
+            type="button"
+            onClick={() => setTickets(ticketCount + 1)}
+            disabled={ticketCount >= availableSeats}
+            className={`w-9 h-9 rounded-full border text-xl leading-none flex items-center justify-center transition
+              ${
+                ticketCount >= availableSeats
+                  ? "border-gray-300 text-gray-300 cursor-not-allowed"
+                  : "border-[#DB4D27] text-[#DB4D27] hover:bg-[#DB4D27] hover:text-white cursor-pointer"
+              }`}
+            aria-label="Increase tickets"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
       {/* Participants */}
       {fields.map((field, index) => {
-        const participant = getValues(`participants.${index}`);
+        const isPrimary = index === 0;
 
-        /* Locked summary */
-        if (index < lockedIndex) {
+        /* PRIMARY CONTACT — full details required */
+        if (isPrimary) {
           return (
             <div
               key={field.id}
-              className="border border-[#DB4D27] p-4 rounded-md bg-white/60"
+              className="border border-[#DB4D27] p-2 rounded-md space-y-4"
             >
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                <div><strong>Name</strong><p>{participant.name}</p></div>
-                <div className="min-w-0"><strong>Email</strong><p className="break-all">{participant.email}</p></div>
-                <div><strong>Phone</strong><p>{participant.phone}</p></div>
-                <div><strong>Category</strong><p className="capitalize">{participant.category}</p></div>
+              <h4 className="font-bold text-[#DB4D27] mb-0">
+                Primary Contact
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <input
+                    {...register(`participants.${index}.name`)}
+                    placeholder="Name"
+                    className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
+                  />
+                  <p className="text-[#DB4D27] text-xs">
+                    {errors?.participants?.[index]?.name?.message}
+                  </p>
+                </div>
+
+                <div>
+                  <input
+                    {...register(`participants.${index}.email`)}
+                    placeholder="Email"
+                    className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
+                  />
+                  <p className="text-[#DB4D27] text-xs">
+                    {errors?.participants?.[index]?.email?.message}
+                  </p>
+                </div>
+
+                <div>
+                  <input
+                    {...register(`participants.${index}.phone`)}
+                    placeholder="Phone"
+                    className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
+                  />
+                  <p className="text-[#DB4D27] text-xs">
+                    {errors?.participants?.[index]?.phone?.message}
+                  </p>
+                </div>
+
+                <div>
+                  <select
+                    {...register(`participants.${index}.category`)}
+                    className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="general">General</option>
+                    <option value="senior">Senior Citizen</option>
+                    <option value="student">Student</option>
+                  </select>
+                  <p className="text-[#DB4D27] text-xs">
+                    {errors?.participants?.[index]?.category?.message}
+                  </p>
+                </div>
               </div>
             </div>
           );
         }
 
-        /* Active form */
+        /* EXTRA TICKET — name optional, no other required fields */
         return (
           <div
             key={field.id}
-            className="border border-[#DB4D27] p-4 rounded-md space-y-4"
+            className="border border-[#DB4D27]/60 p-2 rounded-md bg-white/40"
           >
-            <h4 className="font-bold text-[#DB4D27]">Participant {index + 1}</h4>
+            <h4 className="font-semibold text-[#DB4D27] mb-0">
+              Person {index + 1} (optional)
+            </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
@@ -217,46 +321,30 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
                   placeholder="Name"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
-                <p className="text-[#DB4D27] text-xs">
-                  {errors?.participants?.[index]?.name?.message}
-                </p>
               </div>
-
               <div>
                 <input
                   {...register(`participants.${index}.email`)}
                   placeholder="Email"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
-                <p className="text-[#DB4D27] text-xs">
-                  {errors?.participants?.[index]?.email?.message}
-                </p>
               </div>
-
               <div>
                 <input
                   {...register(`participants.${index}.phone`)}
                   placeholder="Phone"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
-                <p className="text-[#DB4D27] text-xs">
-                  {errors?.participants?.[index]?.phone?.message}
-                </p>
               </div>
-
               <div>
                 <select
                   {...register(`participants.${index}.category`)}
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 >
-                  <option value="">Select Category</option>
                   <option value="general">General</option>
                   <option value="senior">Senior Citizen</option>
                   <option value="student">Student</option>
                 </select>
-                <p className="text-[#DB4D27] text-xs">
-                  {errors?.participants?.[index]?.category?.message}
-                </p>
               </div>
             </div>
           </div>
@@ -273,19 +361,6 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
       {/* Action buttons */}
       <div className="flex gap-4">
         <button
-          type="button"
-          onClick={handleAddParticipant}
-          disabled={!isParticipantValid(lockedIndex) || fields.length >= availableSeats}
-          className={`px-6 py-2 rounded border transition
-            ${!isParticipantValid(lockedIndex) || fields.length >= availableSeats
-              ? "border-gray-400 text-gray-400 cursor-not-allowed"
-              : "border-[#DB4D27] text-[#DB4D27] hover:bg-[#DB4D27] hover:text-white cursor-pointer"
-            }`}
-        >
-          + Add Another Person
-        </button>
-
-        <button
           type="submit"
           disabled={!isParticipantValid(0) || isSubmitting}
           className={`px-6 py-2 rounded transition
@@ -294,9 +369,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
               : "bg-[#DB4D27] text-white cursor-pointer hover:bg-[#c44421]"
             }`}
         >
-          {isSubmitting
-            ? "Processing..."
-            : "Submit & Continue"}
+          {isSubmitting ? "Processing..." : "Submit & Continue"}
         </button>
       </div>
     </form>

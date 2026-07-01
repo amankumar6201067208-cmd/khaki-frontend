@@ -1,5 +1,13 @@
 import * as yup from "yup";
 
+// Only the PRIMARY participant (participants[0]) must provide name / email /
+// phone — those become the booking contact and the PayU payer. Extra tickets
+// only need a category (defaulted to "general"), so a user booking 5 tickets
+// no longer has to fill 5 full forms. The category drives the student/senior
+// discount, so it stays required on every ticket.
+const isPrimary = (ctx) =>
+  ctx.path === "participants[0]" || ctx.path?.startsWith("participants[0].");
+
 export const publicWalkBookingSchema = yup.object({
   participants: yup
     .array()
@@ -8,29 +16,32 @@ export const publicWalkBookingSchema = yup.object({
         name: yup
           .string()
           .trim()
-          .required("Name is required"),
+          .test("primary-name", "Name is required", function (value) {
+            return isPrimary(this) ? !!value : true;
+          }),
 
         email: yup
           .string()
           .trim()
           .email("Invalid email address")
-          .required("Email is required"),
+          .test("primary-email", "Email is required", function (value) {
+            return isPrimary(this) ? !!value : true;
+          }),
 
         phone: yup
           .string()
           .trim()
-          .matches(
-            /^[0-9]{8,15}$/,
-            "Enter a valid phone number"
-          )
-          .required("Phone number is required"),
+          .matches(/^[0-9]{8,15}$/, {
+            message: "Enter a valid phone number",
+            excludeEmptyString: true,
+          })
+          .test("primary-phone", "Phone number is required", function (value) {
+            return isPrimary(this) ? !!value : true;
+          }),
 
         category: yup
           .string()
-          .oneOf(
-            ["general", "senior", "student"],
-            "Invalid category"
-          )
+          .oneOf(["general", "senior", "student"], "Invalid category")
           .required("Please select a category"),
       })
     )

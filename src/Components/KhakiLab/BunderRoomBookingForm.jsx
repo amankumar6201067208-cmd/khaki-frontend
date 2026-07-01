@@ -128,10 +128,12 @@ const BunderRoomBookingForm = () => {
           className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
         >
           <option value="">Select Layout</option>
-          <option value="exhibition">Exhibition</option>
-          <option value="class-room(16-pax)">Class room (16 pax)</option>
-          <option value="auditorium(24-pax)">Auditorium (24 pax)</option>
-          <option value="conference(12-pax)">Conference (12 pax)</option>
+          <option value="exhibition-layout">EXHIBITION LAYOUT</option>
+          <option value="12-PAX-CONFERENCE-ROOM">12 PAX CONFERENCE ROOM</option>
+          <option value="16-PAX-CLASSROOM-STYLE-SITTING">16 PAX CLASSROOM STYLE SITTING</option>
+          <option value="16-PAX-CONFERENCE-ROOM">16 PAX CONFERENCE ROOM</option>
+          <option value="24-PAX-THEATRE-STYLE-SITTING">24 PAX THEATRE STYLE SITTING</option>
+          <option value="40-PAX-THEATRE-STYLE-SITTING">40 PAX THEATRE STYLE SITTING</option>
         </select>
         <p className="text-[#DB4D27] text-xs">{errors.layout?.message}</p>
       </div>
