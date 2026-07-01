@@ -105,7 +105,7 @@ const isSoldOut = slotAvailableSeats === 0;
           {tour.startingPoint && (
             <div>
               <p className="text-3xl font-bold text-[#DB4D27] my-5">
-                Starting Point
+                Venue
               </p>
 
               <p className="text-[20px] font-bold">

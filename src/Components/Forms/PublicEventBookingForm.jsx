@@ -163,8 +163,8 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
         return;
       }
 
-      // PAID CASE
-      const paymentRes = await fetch(`${BACKEND_URL}/api/payment/create`, {
+      // PAID CASE — public events use their OWN PayU gateway (event-payment)
+      const paymentRes = await fetch(`${BACKEND_URL}/api/event-payment/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -328,6 +328,9 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
                   placeholder="Email"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
+                <p className="text-[#DB4D27] text-xs">
+                  {errors?.participants?.[index]?.email?.message}
+                </p>
               </div>
               <div>
                 <input
@@ -335,6 +338,9 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
                   placeholder="Phone"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
+                <p className="text-[#DB4D27] text-xs">
+                  {errors?.participants?.[index]?.phone?.message}
+                </p>
               </div>
               <div>
                 <select

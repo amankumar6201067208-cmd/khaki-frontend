@@ -415,6 +415,9 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
                   placeholder="Email"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
+                <p className="text-[#DB4D27] text-xs">
+                  {errors?.participants?.[index]?.email?.message}
+                </p>
               </div>
               <div>
                 <input
@@ -422,6 +425,9 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
                   placeholder="Phone"
                   className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
                 />
+                <p className="text-[#DB4D27] text-xs">
+                  {errors?.participants?.[index]?.phone?.message}
+                </p>
               </div>
 
               {/* CATEGORY (drives discount) */}
