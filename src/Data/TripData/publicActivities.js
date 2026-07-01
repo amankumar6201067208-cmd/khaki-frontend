@@ -54,10 +54,27 @@ const formatActivity = (trip) => {
   };
 };
 
-export const getPublicActivities = async () => {
-  const res = await strapi.get(
-  "/public-walk-and-events?populate[FeatureImages]=true&populate[Highlights]=true&populate[BookingSlots][populate]=*&populate[StartingPoint]=true"
-);
+// Fetch every page — Strapi returns only 25 records by default, so without
+// this a growing list of walks/events would silently drop the newest ones.
+const PAGE_SIZE = 100;
 
-  return res.data.data.map((trip) => formatActivity(trip));
+export const getPublicActivities = async () => {
+  const baseQuery =
+    "/public-walk-and-events?populate[FeatureImages]=true&populate[Highlights]=true&populate[BookingSlots][populate]=*&populate[StartingPoint]=true";
+
+  let page = 1;
+  let all = [];
+
+  while (true) {
+    const res = await strapi.get(
+      `${baseQuery}&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`
+    );
+    all = all.concat(res.data?.data || []);
+
+    const pageCount = res.data?.meta?.pagination?.pageCount ?? 1;
+    if (page >= pageCount) break;
+    page += 1;
+  }
+
+  return all.map((trip) => formatActivity(trip));
 };

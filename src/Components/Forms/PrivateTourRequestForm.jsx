@@ -3,12 +3,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { privateTourSchema } from "./privateTourSchema";
-import { getNames } from "country-list";
+import { getOrderedCountries } from "../../utils/countries";
 import Modal from "../Modal";
 import { STRAPI_BASE_URL } from "../../api/strapi";
 // import ReCAPTCHA from "react-google-recaptcha";
 
-const countries = getNames();
+const countries = getOrderedCountries();
 
 const addDuration = (time, hours) => {
   if (!time) return "";
@@ -91,8 +91,8 @@ const PrivateTourRequestForm = ({ tour }) => {
       country: data.country,
       preferredDate: data.preferredDate,
       title: data.namePrifix,
-      startTime: data.startTime, 
-      endTime: data.endTime, 
+      startTime: data.startTime,
+      endTime: data.endTime,
       countryCode: data.countryCode,
       people: data.people,
       otherRequest: data.otherRequest,
@@ -103,16 +103,13 @@ const PrivateTourRequestForm = ({ tour }) => {
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `${STRAPI_BASE_URL}/api/private-tour-bookings`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: payload }),
+      const res = await fetch(`${STRAPI_BASE_URL}/api/private-tour-bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ data: payload }),
+      });
 
       const result = await res.json();
 
@@ -161,7 +158,7 @@ const PrivateTourRequestForm = ({ tour }) => {
           />
           <p className="text-[#DB4D27] text-sm">{errors.email?.message}</p>
 
-         <input type="hidden" {...register("tourName")} />
+          <input type="hidden" {...register("tourName")} />
         </div>
 
         <div className="flex gap-3">
@@ -299,7 +296,8 @@ const PrivateTourRequestForm = ({ tour }) => {
         </div>
 
         <div className="text-[16px] font-semibold">
-          Total Amount Payable:<span className="text-[32px]"> ₹ {totalAmount}/-</span>
+          Total Amount Payable:
+          <span className="text-[32px]"> ₹ {totalAmount}/-</span>
         </div>
 
         {/* reCAPTCHA */}
@@ -439,9 +437,10 @@ const PrivateTourRequestForm = ({ tour }) => {
               </li>
               <br />
               <li>
-                The Company may use photographs taken during the tour for
-                publications on its websites, social media platforms and/ or in
-                print advertising and for promotional literature.
+                The Company may use Photographs/ Videos taken during the tour
+                for publication on its or third party websites, social medai
+                platforms and/ or in print advertising and for promotional
+                literature.
               </li>
               <br />
               <li>

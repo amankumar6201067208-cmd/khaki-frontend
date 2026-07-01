@@ -83,6 +83,8 @@ const formatTrip = (trip) => {
     tourType: trip.tripType === "Group Tour" ? "group" : "private",
 
     publishDate: trip.publishDate,
+    // Fallback ordering key when publishDate isn't set manually.
+    publishedAt: trip.publishedAt,
 
     featureImage,
 
@@ -102,12 +104,36 @@ const formatTrip = (trip) => {
   };
 };
 
-export const getTrips = async () => {
-  const res = await strapi.get(
-    "/trips?populate[featureImage]=true&populate[Images]=true&populate[highlight]=true&populate[startingPoint]=true&populate[GroupTourBookingDetails][populate]=*&populate[BookingSlots][populate]=*"
-  );
+// Fetch EVERY page, not just the first 25 (Strapi's default page size).
+// Without this, once there are >25 trips the newest ones silently disappear
+// from the home page and the Walk/Tours listing.
+const PAGE_SIZE = 100;
 
-  return res.data.data.map((trip) => formatTrip(trip));
+const fetchAllPages = async (baseQuery) => {
+  let page = 1;
+  let all = [];
+
+  while (true) {
+    const res = await strapi.get(
+      `${baseQuery}&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`
+    );
+    all = all.concat(res.data?.data || []);
+
+    const pageCount = res.data?.meta?.pagination?.pageCount ?? 1;
+    if (page >= pageCount) break;
+    page += 1;
+  }
+
+  return all;
+};
+
+export const getTrips = async () => {
+  const baseQuery =
+    "/trips?populate[featureImage]=true&populate[Images]=true&populate[highlight]=true&populate[startingPoint]=true&populate[GroupTourBookingDetails][populate]=*&populate[BookingSlots][populate]=*";
+
+  const trips = await fetchAllPages(baseQuery);
+
+  return trips.map((trip) => formatTrip(trip));
 };
 
 export const getTripBySlug = async (slug) => {

@@ -65,16 +65,19 @@ const Home = () => {
     loadActivities();
   }, []);
 
+  // Order by manual publishDate, falling back to Strapi's publishedAt so a tour
+  // that was published without a publishDate still appears (instead of vanishing).
+  const publishOrder = (t) =>
+    new Date(t.publishDate || t.publishedAt || 0).getTime();
+
   const groupTours = trips
     .filter((trip) => trip.tourType === "group")
-    .filter((trip) => trip.publishDate)
-    .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))
+    .sort((a, b) => publishOrder(b) - publishOrder(a))
     .slice(0, 15);
 
   const privateTours = trips
     .filter((trip) => trip.tourType === "private")
-    .filter((trip) => trip.publishDate)
-    .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))
+    .sort((a, b) => publishOrder(b) - publishOrder(a))
     .slice(0, 15);
 
   const publicWalks = (publicActivities || []).filter(

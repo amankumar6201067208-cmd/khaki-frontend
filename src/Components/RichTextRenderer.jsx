@@ -1,15 +1,5 @@
 import { STRAPI_BASE_URL } from "../api/strapi";
 
-/* ------------------------------------------------------------------
-   Strapi Rich-Text (Blocks) renderer
-   Renders inline marks (bold / italic / underline / strikethrough /
-   code / link) and block types (paragraph / heading / list / quote /
-   code / image) so the editor formatting reflects on the frontend.
-
-   Usage:  <RichTextRenderer nodes={blocksArray} />
-   `nodes` is the raw Strapi "blocks" field value (an array).
-------------------------------------------------------------------- */
-
 // Inline node: a text leaf with marks, or a link
 const renderLeaf = (node, key) => {
   // Link node — render an <a> with its (formatted) children inside

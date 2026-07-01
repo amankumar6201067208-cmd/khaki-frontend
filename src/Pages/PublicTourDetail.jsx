@@ -5,6 +5,7 @@ import { getPublicActivities } from "../Data/TripData/publicActivities";
 import GroupTourImageSlider from "../Components/GroupToursDetails/GroupTourImageSlider";
 import StartingPointMap from "../Components/GroupToursDetails/StartingPointMap";
 import PublicWalkBookingForm from "../Components/Forms/PublicWalkBookingForm";
+import RichTextRenderer from "../Components/RichTextRenderer";
 import { isUpcoming } from "../utils/dateUtils";
 
 /* FORMAT DATE */
@@ -111,7 +112,14 @@ const isSoldOut = slotAvailableSeats === 0;
               <span className="text-[20px]"> Per Person (All inclusive)</span>
             </p>
 
-            <p className="mt-4 text-[16px] leading-6">{tour.description}</p>
+            {Array.isArray(tour.description) ? (
+              <RichTextRenderer
+                nodes={tour.description}
+                className="mt-4 text-[16px] leading-6"
+              />
+            ) : (
+              <p className="mt-4 text-[16px] leading-6">{tour.description}</p>
+            )}
 
             <div className="mt-6 font-semibold">
               <p>{tour.note}</p>
