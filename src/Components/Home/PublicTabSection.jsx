@@ -7,10 +7,12 @@ const PublicTabSection = ({ title, items }) => {
   const flattenedItems = useMemo(() => {
     return (items || []).flatMap((item) =>
       (item.schedule || []).map((slot, index) => ({
-        id: `${item.id}-${index}`, 
+        id: `${item.id}-${index}`,
         title: item.title,
         slug: item.slug,
         type: item.type,
+        // Carry EventType through so the badge shows Event vs Talk.
+        eventType: item.eventType,
         date: slot.date,
         time: slot.time,
 

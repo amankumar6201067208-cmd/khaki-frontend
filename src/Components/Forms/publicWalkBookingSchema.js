@@ -1,10 +1,5 @@
 import * as yup from "yup";
 
-// Only the PRIMARY participant (participants[0]) must provide name / email /
-// phone — those become the booking contact and the PayU payer. Extra tickets
-// only need a category (defaulted to "general"), so a user booking 5 tickets
-// no longer has to fill 5 full forms. The category drives the student/senior
-// discount, so it stays required on every ticket.
 const isPrimary = (ctx) =>
   ctx.path === "participants[0]" || ctx.path?.startsWith("participants[0].");
 

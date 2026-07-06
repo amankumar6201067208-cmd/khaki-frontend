@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getTripBySlug } from "../Data/TripData/trips";
-
 import GroupTourImageSlider from "../Components/GroupToursDetails/GroupTourImageSlider";
 import StartingPointMap from "../Components/GroupToursDetails/StartingPointMap";
 import PrivateTourRequestForm from "../Components/Forms/PrivateTourRequestForm";

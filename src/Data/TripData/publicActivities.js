@@ -40,6 +40,8 @@ const formatActivity = (trip) => {
   return {
     id: trip.id,
     type: trip.TourType === "Public Walk" ? "walk" : "event",
+    // EventType: "Ofline" = a real event, "Online" = a talk (backend enum).
+    eventType: trip.EventType,
     title: `#${trip.Title}`,
     slug: trip.Slug,
     price: Number(trip.Price),

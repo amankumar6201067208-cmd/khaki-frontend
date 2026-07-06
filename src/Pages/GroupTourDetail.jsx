@@ -1,7 +1,6 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { getTripBySlug } from "../Data/TripData/trips";
-
 import GroupTourImageSlider from "../Components/GroupToursDetails/GroupTourImageSlider";
 import GroupTourCalendar from "../Components/GroupToursDetails/BookingCalendar";
 import StartingPointMap from "../Components/GroupToursDetails/StartingPointMap";
@@ -14,7 +13,7 @@ const GroupTourDetail = () => {
 
   const [tour, setTour] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [calendarKey, setCalendarKey] = useState(0); // ✅ calendar force re-mount key
+  const [calendarKey, setCalendarKey] = useState(0); // calendar force re-mount key
 
   const loadTour = useCallback(async () => {
     setLoading(true);
@@ -23,7 +22,7 @@ const GroupTourDetail = () => {
       console.log("=== FETCHED SCHEDULE ===", JSON.stringify(data?.schedule, null, 2));
       if (data && data.tourType === "group") {
         setTour(data);
-        setCalendarKey((k) => k + 1); // ✅ fresh data aane pe calendar re-mount
+        setCalendarKey((k) => k + 1); // fresh data aane pe calendar re-mount
       }
     } catch (err) {
       console.error("Error loading tour:", err);

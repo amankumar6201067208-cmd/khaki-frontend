@@ -25,7 +25,8 @@ const PublicRow = ({ item }) => {
         <div className="w-[80%]">
           {item.type === "event" && (
             <span className="inline-block mb-1 bg-[#DB4D15] text-white text-xs font-medium px-2 py-1 rounded">
-              Talks
+              {/* Backend EventType: "Ofline" → Event, "Online" (or unset) → Talk */}
+              {item.eventType === "Ofline" ? "Event" : "Talk"}
             </span>
           )}
 

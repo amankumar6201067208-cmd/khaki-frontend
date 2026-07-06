@@ -104,9 +104,6 @@ const formatTrip = (trip) => {
   };
 };
 
-// Fetch EVERY page, not just the first 25 (Strapi's default page size).
-// Without this, once there are >25 trips the newest ones silently disappear
-// from the home page and the Walk/Tours listing.
 const PAGE_SIZE = 100;
 
 const fetchAllPages = async (baseQuery) => {

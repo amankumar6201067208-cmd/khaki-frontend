@@ -105,6 +105,34 @@ const isSoldOut = slotAvailableSeats === 0;
             <div className="mt-6 font-semibold">
               <p>{tour.note}</p>
             </div>
+
+            {/* Duration (+ Distance) — icon block, same as public walk detail.
+                Duration is only set for offline events. */}
+            {tour.duration && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-6">
+                <div className="flex gap-2.5">
+                  <div className="text-[30px]">
+                    <i className="fa-regular fa-clock"></i>
+                  </div>
+                  <div>
+                    <strong>Duration</strong>
+                    <p>{tour.duration}</p>
+                  </div>
+                </div>
+
+                {/* {tour.distance && (
+                  <div className="flex gap-2.5">
+                    <div className="text-[30px]">
+                      <i className="fa-regular fa-compass"></i>
+                    </div>
+                    <div>
+                      <strong>Distance</strong>
+                      <p>{tour.distance}</p>
+                    </div>
+                  </div>
+                )} */}
+              </div>
+            )}
           </div>
         </div>
 

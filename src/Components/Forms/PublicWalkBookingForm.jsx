@@ -129,7 +129,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
         if (data?.totalAmount !== undefined) {
           setTotalAmount(data.totalAmount);
         }
-        // ✅ Store fresh remaining quota — used by getDiscountPercent for UI display
+        // Store fresh remaining quota — used by getDiscountPercent for UI display
         if (data?.remainingDiscountQuota !== undefined) {
           setRemainingDiscountQuota(data.remainingDiscountQuota);
         }
@@ -150,7 +150,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
     calculate();
   }, [participants, tour.price, selectedSlot?.time]);
 
-  // 🔹 PayU redirect
+  // PayU redirect
   const payWithPayU = (data) => {
     const form = document.createElement("form");
     form.method = "POST";
@@ -181,7 +181,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
   };
 
   /* SUBMIT */
-  // 🔥 MAIN SUBMIT
+  // MAIN SUBMIT
   const onSubmit = async (data) => {
     if (!isFirstParticipantValid) return;
     if (!data.acceptedTerms) return;
@@ -196,7 +196,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
     try {
       const firstParticipant = data.participants[0];
 
-      // ✅ BOOKING PAYLOAD
+      //  BOOKING PAYLOAD
       const bookingPayload = {
         tourSlug: tour.slug.toLowerCase(),
         date: selectedSlot?.date,
@@ -215,7 +215,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
         startingPoint: tour.startingPoint?.title,
       };
 
-      // ✅ CREATE BOOKING
+      //  CREATE BOOKING
       const bookingRes = await fetch(
         `${BACKEND_URL}/api/public-walk-booking/create`,
         {
@@ -231,7 +231,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
         throw new Error("Booking creation failed");
       }
 
-      // ✅ CREATE PAYMENT
+      // CREATE PAYMENT
       const paymentRes = await fetch(
         `${BACKEND_URL}/api/payment/create`,
         {
@@ -254,7 +254,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
         throw new Error("Payment initialization failed");
       }
 
-      // ✅ REDIRECT TO PAYU
+      //  REDIRECT TO PAYU
       payWithPayU(paymentData);
 
     } catch (error) {

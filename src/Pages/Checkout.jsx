@@ -63,7 +63,7 @@ const Checkout = () => {
     name: "passengers",
   });
 
-  // 🔹 PAYU FORM SUBMIT
+  //  PAYU FORM SUBMIT
   const payWithPayU = (data) => {
     const form = document.createElement("form");
     form.method = "POST";
@@ -95,12 +95,12 @@ const Checkout = () => {
     form.submit();
   };
 
-  // 🔹 FORM SUBMIT
+  //  FORM SUBMIT
   const onSubmit = async (data) => {
     try {
       // STEP 1 — Create Booking in Strapi
       const bookingPayload = {
-        tourSlug: tour.slug.toLowerCase(), // ✅ ensure lowercase
+        tourSlug: tour.slug.toLowerCase(), //  ensure lowercase
         date: formattedDate,
         slot: booking.slot.time,
         tourTitle: tour.title,

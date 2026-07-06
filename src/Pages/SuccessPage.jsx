@@ -24,7 +24,7 @@ const SuccessPage = () => {
     return () => clearTimeout(timer);
   }, [countdown, navigate, redirectPath]);
 
-  // ✅ Both "paid" and "confirmed" are success states
+  // Both "paid" and "confirmed" are success states
   const isSuccess = status === "paid" || status === "confirmed";
   const hasTxnid = Boolean(txnid);
 
@@ -35,7 +35,7 @@ const SuccessPage = () => {
         {isSuccess ? (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
-              🎉 Booking Confirmed!
+             Booking Confirmed!
             </h1>
             <p className="text-[16px] md:text-[18px] text-[#231F20] mb-2">
               Our team will get in touch with you soon.
@@ -52,7 +52,7 @@ const SuccessPage = () => {
         ) : (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-red-600 mb-4">
-              ❌ Payment Failed
+              Payment Failed
             </h1>
             <p className="text-[16px] text-[#231F20] mb-2">
               Something went wrong. Please try again.

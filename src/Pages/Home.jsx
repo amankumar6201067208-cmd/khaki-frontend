@@ -65,8 +65,6 @@ const Home = () => {
     loadActivities();
   }, []);
 
-  // Order by manual publishDate, falling back to Strapi's publishedAt so a tour
-  // that was published without a publishDate still appears (instead of vanishing).
   const publishOrder = (t) =>
     new Date(t.publishDate || t.publishedAt || 0).getTime();
 
