@@ -5,7 +5,11 @@ import { getPublicActivities } from "../Data/TripData/publicActivities";
 import TripSlider from "../Components/Home/TripSlider";
 import PublicTabSection from "../Components/Home/PublicTabSection";
 import WhatsNewSection from "../Components/Home/WhatsNewSection";
-import { getInternationalImage } from "../Data/HomeData/ChangesSection";
+import {
+  getInternationalImage,
+  getHomePage,
+  hasWhatsNewContent,
+} from "../Data/HomeData/ChangesSection";
 import AmbassadorsSection from "../Components/Home/AmbassadorsSection";
 import GuestReviewsCarousel from "../Components/Home/GuestReviewsCarousel";
 import KhakiInNewsCarousel from "../Components/Home/KhakiInNewsCarousel";
@@ -15,6 +19,7 @@ import KhakiHeritageFoundation from "../Components/Home/KhakiHeritageFoundation"
 const Home = () => {
   const [current, setCurrent] = useState(0);
   const [internationalImg, setInternationalImg] = useState(null);
+  const [whatsNew, setWhatsNew] = useState(null);
   const [trips, setTrips] = useState([]);
   const [publicActivities, setPublicActivities] = useState([]);
 
@@ -28,8 +33,21 @@ const Home = () => {
       }
     };
 
+    const loadWhatsNew = async () => {
+      try {
+        setWhatsNew(await getHomePage());
+      } catch (err) {
+        console.error("Error loading What's New:", err);
+      }
+    };
+
     loadInternationalImage();
+    loadWhatsNew();
   }, []);
+
+  // Whether the What's New section will render — used to drop the reserved
+  // (fixed-height) space above it when there's nothing to show.
+  const showWhatsNew = hasWhatsNewContent(whatsNew);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -162,7 +180,11 @@ const Home = () => {
 
       {/* Public Walk & Events */}
 
-      <section className="bg-[url('/src/assets/Background/snow2.png')] py-16 px-3 md:h-170 h-325">
+      <section
+        className={`bg-[url('/src/assets/Background/snow2.png')] py-16 px-3 ${
+          showWhatsNew ? "md:h-170 h-325" : "md:h-auto h-auto"
+        }`}
+      >
         <div className="bg-white max-w-285 mx-auto rounded-[25px] p-6 md:p-10 -mt-150 md:-mt-60 shadow-[0px_0px_6px_0px_rgba(0,0,0,0.5)]">
           <h2 className="text-3xl font-bold text-center mb-6">
             Public walks and events for Mumbaikars
@@ -185,13 +207,12 @@ const Home = () => {
         </div>
       </section>
 
-      <WhatsNewSection />
+      <WhatsNewSection data={whatsNew} />
 
-      {/* International Image */}
-
-      <section className="flex justify-center items-center mt-16">
-        <div className="w-285">
-          {internationalImg && (
+      {/* International Image — only render when an image is set in the backend */}
+      {internationalImg?.image && (
+        <section className="flex justify-center items-center mt-16">
+          <div className="w-285">
             <a href={internationalImg.imageLink}>
               <img
                 src={internationalImg.image}
@@ -199,9 +220,9 @@ const Home = () => {
                 className="h-auto w-full rounded-xl"
               />
             </a>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       <AmbassadorsSection />
 

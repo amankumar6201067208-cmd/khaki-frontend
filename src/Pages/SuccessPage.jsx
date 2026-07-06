@@ -7,8 +7,14 @@ const SuccessPage = () => {
 
   const status = searchParams.get("status");
   const bookingId = searchParams.get("bookingId");
+  const donationId = searchParams.get("donationId");
   const txnid = searchParams.get("txnid");
   const tourSlug = searchParams.get("tourSlug");
+
+  // Donations carry a donationId (not a bookingId) — show the right label.
+  const isDonation = Boolean(donationId);
+  const referenceLabel = isDonation ? "Donation ID" : "Booking ID";
+  const referenceId = isDonation ? donationId : bookingId;
 
   const redirectPath = tourSlug ? `/walk-tours` : "/walk-tours";
 
@@ -35,13 +41,13 @@ const SuccessPage = () => {
         {isSuccess ? (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-[#231F20] mb-4">
-             Booking Confirmed!
+             {isDonation ? "Thank You for Your Donation!" : "Booking Confirmed!"}
             </h1>
             <p className="text-[16px] md:text-[18px] text-[#231F20] mb-2">
               Our team will get in touch with you soon.
             </p>
             <p className="text-[14px] text-gray-500 mb-1">
-              Booking ID: <strong>{bookingId}</strong>
+              {referenceLabel}: <strong>{referenceId}</strong>
             </p>
             {hasTxnid && (
               <p className="text-[14px] text-gray-500 mb-4">
@@ -58,7 +64,7 @@ const SuccessPage = () => {
               Something went wrong. Please try again.
             </p>
             <p className="text-[14px] text-gray-500 mb-4">
-              Booking ID: <strong>{bookingId}</strong>
+              {referenceLabel}: <strong>{referenceId}</strong>
             </p>
           </>
         )}

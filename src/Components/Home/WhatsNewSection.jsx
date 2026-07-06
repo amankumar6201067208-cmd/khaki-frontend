@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
-import { getHomePage } from "../../Data/HomeData/ChangesSection";
+import { hasWhatsNewContent } from "../../Data/HomeData/ChangesSection";
+import RichTextRenderer from "../RichTextRenderer";
 
-const WhatsNewSection = () => {
-  const [data, setData] = useState(null);
+// `data` is fetched once in Home and passed down (so the parent can also
+// adjust surrounding layout when this section is hidden).
+const WhatsNewSection = ({ data }) => {
+  // Hide the whole section when the backend has no What's New content.
+  if (!hasWhatsNewContent(data)) return null;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await getHomePage();
-      setData(res);
-    };
-
-    fetchData();
-  }, []);
-
-  if (!data) return null;
+  const paragraphBlocks = Array.isArray(data?.description)
+    ? data.description
+    : null;
 
   return (
     <section className="md:-mt-40">
@@ -40,9 +36,16 @@ const WhatsNewSection = () => {
               {data.title}
             </h2>
 
-            <p className=" leading-6 text-white/90 mt-5 text-center md:text-start ">
-              {data.description}
-            </p>
+            {paragraphBlocks ? (
+              <RichTextRenderer
+                nodes={paragraphBlocks}
+                className="leading-6 text-white/90 mt-5 text-center md:text-start"
+              />
+            ) : (
+              <p className=" leading-6 text-white/90 mt-5 text-center md:text-start ">
+                {data.description}
+              </p>
+            )}
 
             {/* LINKED BUTTON */}
             <a
