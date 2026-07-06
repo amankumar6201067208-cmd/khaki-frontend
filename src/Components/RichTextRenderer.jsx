@@ -1,4 +1,4 @@
-import { STRAPI_BASE_URL } from "../api/strapi";
+import { mediaUrl } from "../api/strapi";
 
 // Inline node: a text leaf with marks, or a link
 const renderLeaf = (node, key) => {
@@ -110,7 +110,7 @@ const renderBlock = (node, key) => {
       return node.image?.url ? (
         <div key={key} className="flex justify-center my-6">
           <img
-            src={`${STRAPI_BASE_URL}${node.image.url}`}
+            src={mediaUrl(node.image.url)}
             alt={node.image.alternativeText || ""}
             className="max-w-full rounded"
           />

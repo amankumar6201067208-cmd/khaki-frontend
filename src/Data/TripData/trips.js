@@ -1,6 +1,6 @@
 import strapi from "../../api/strapi";
 
-import { STRAPI_BASE_URL } from "../../api/strapi";
+import { mediaUrl } from "../../api/strapi";
 
 const formatTime = (time) => {
   if (!time) return "";
@@ -16,10 +16,10 @@ const formatTime = (time) => {
 
 const formatTrip = (trip) => {
   const featureImage = trip.featureImage
-    ? STRAPI_BASE_URL + trip.featureImage.url
+    ? mediaUrl(trip.featureImage.url)
     : "";
 
-  const images = trip.Images?.map((img) => STRAPI_BASE_URL + img.url) || [];
+  const images = trip.Images?.map((img) => mediaUrl(img.url)) || [];
 
   const highlights = trip.highlight?.map((h) => h.Text) || [];
 

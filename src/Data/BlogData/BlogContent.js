@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { STRAPI_BASE_URL } from "../../api/strapi";
+import { STRAPI_BASE_URL, mediaUrl } from "../../api/strapi";
 
 export const getBlogs = async () => {
   try {
@@ -12,9 +12,7 @@ export const getBlogs = async () => {
       title: blog.title,
       publishDate: blog.publishDate,
       excerpt: blog.excerpt,
-      image: blog.featureImage
-        ? `${STRAPI_BASE_URL}${blog.featureImage.url}`
-        : null,
+      image: blog.featureImage ? mediaUrl(blog.featureImage.url) : null,
     }));
   } catch (error) {
     console.error("Error fetching blogs:", error);

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { STRAPI_BASE_URL } from "../../api/strapi";
+import { STRAPI_BASE_URL, mediaUrl } from "../../api/strapi";
 
 export const getHomePage = async () => {
   try {
@@ -16,7 +16,7 @@ export const getHomePage = async () => {
       buttonText: data.WhatsNewSection?.ButtonText || "",
       buttonLink: data.WhatsNewSection?.ButtonURL || "",
       image: data.WhatsNewSection?.image
-        ? `${STRAPI_BASE_URL}${data.WhatsNewSection.image.url}`
+        ? mediaUrl(data.WhatsNewSection.image.url)
         : null,
     };
 
@@ -48,7 +48,7 @@ export const getInternationalImage = async () => {
 
   return {
     image: img
-      ? `${STRAPI_BASE_URL}${img.formats?.small?.url || img.url}`
+      ? mediaUrl(img.formats?.small?.url || img.url)
       : null,
     imageLink: data?.InternationalImage?.InternationalImageURL
   };

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getBlogBySlug } from "../Data/BlogData/BlogDetailsContent";
-import { STRAPI_BASE_URL } from "../api/strapi";
+import { mediaUrl } from "../api/strapi";
 import RichTextRenderer from "../Components/RichTextRenderer";
 
 const BlogDetail = () => {
@@ -83,7 +83,7 @@ const BlogDetail = () => {
             return (
               <div key={index} className="flex justify-center my-8">
                 <img
-                  src={`${STRAPI_BASE_URL}${block.image?.url}`}
+                  src={mediaUrl(block.image?.url)}
                   alt={block.image?.alternativeText || ""}
                   className="max-w-150 max-h-100"
                 />

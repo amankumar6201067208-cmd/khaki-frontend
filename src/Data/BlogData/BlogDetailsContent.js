@@ -1,5 +1,5 @@
 import axios from "axios";
-import { STRAPI_BASE_URL } from "../../api/strapi";
+import { STRAPI_BASE_URL, mediaUrl } from "../../api/strapi";
 
 export const getBlogBySlug = async (slug) => {
   try {
@@ -20,9 +20,7 @@ export const getBlogBySlug = async (slug) => {
       id: blog.id,
       title: blog.title,
       publishDate: blog.publishDate,
-      image: blog.featureImage
-        ? `${STRAPI_BASE_URL}${blog.featureImage.url}`
-        : null,
+      image: blog.featureImage ? mediaUrl(blog.featureImage.url) : null,
       content: blog.Content
     };
 

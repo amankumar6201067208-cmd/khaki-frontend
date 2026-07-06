@@ -18,7 +18,8 @@ const PublicTabSection = ({ title, items }) => {
 
         duration: item.duration,
         distance: item.distance,
-        venue: item.venue,
+        // Venue = the activity's Starting Point title (offline events show this).
+        venue: item.startingPoint?.title || "",
       }))
     );
   }, [items]);
