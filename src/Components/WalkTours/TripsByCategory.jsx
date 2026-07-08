@@ -8,7 +8,14 @@ const TripsByCategory = ({
   icon,
   trips,
 }) => {
-  const filteredTrips = trips.filter((trip) => trip.category === category);
+  // Order within each category by publishDate (latest first), falling back to
+  // Strapi's publishedAt when no manual publishDate is set.
+  const publishOrder = (t) =>
+    new Date(t.publishDate || t.publishedAt || 0).getTime();
+
+  const filteredTrips = trips
+    .filter((trip) => trip.category === category)
+    .sort((a, b) => publishOrder(b) - publishOrder(a));
 
   if (filteredTrips.length === 0) return null;
 

@@ -19,7 +19,19 @@ const KhakiLibrarySection = () => {
     >
       <div className="absolute inset-0 bg-black/10" />
 
-      <div className="relative max-w-285 mx-auto px-6 w-full flex justify-end">
+      <div className="relative max-w-285 mx-auto px-6 w-full flex flex-col md:flex-row justify-between items-center gap-8 py-10">
+        {/* Library Search Widget */}
+        <div className="bg-white p-3 rounded-md shadow-lg w-full max-w-117">
+          <iframe
+            src="https://khakilab.librarika.com/widgets/search/horizontal"
+            title="K.H.A.K.I. Library Search"
+            width="468"
+            height="150"
+            scrolling="no"
+            style={{ border: 0, width: "100%", maxWidth: "100%" }}
+          />
+        </div>
+
         {/* Content Box */}
         <div className="bg-black text-white p-7 max-w-90">
           <h2 className="text-[24px] font-bold text-[#e4572e] mb-3">
