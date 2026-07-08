@@ -26,7 +26,7 @@ export const khakiLibrarySectionData = {
   title: "K.H.A.K.I. Library",
 
   description:
-    "The K.H.A.K.I. Library has a collection of about 170 books on Mumbai currently, and more are being added every month. The library is for reference only, and there is no charge.",
+    "The KHAKI Library has a collection of about 800 books centred around the city of Mumbai, and more are being added every month. The library is for reference only with prior permission. For access, email us at khakilabevents@gmail.com.",
 
   buttonText: "View Catalogue",
   buttonLink: "https://khakilab.librarika.com/",

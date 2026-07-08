@@ -42,8 +42,8 @@ const KhakiLabEvents = () => {
               While events at the K.H.A.K.I Lab such as lectures and exhibitions
               are hosted by Khaki, we are open to partner with other individuals
               or organisations to co-host events. You can also rent out our
-              space to organise your own event. For more information, contact
-              Amit at 8828100111
+              space to organise your own event. with. For more details, write to
+              us at khakilabevents@gmail.com or call us on +91 88281 00111.
             </p>
           </div>
         </div>

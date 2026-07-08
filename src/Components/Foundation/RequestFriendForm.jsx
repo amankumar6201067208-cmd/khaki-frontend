@@ -25,7 +25,7 @@ const RequestFriendForm = () => {
       yourEmail: data.yourEmail?.trim(),
       friendName: data.friendName?.trim(),
       friendEmail: data.friendEmail?.trim(),
-      message: `Hi! Support an NGO that's doing good work in the
+      message: `Support an NGO that's doing good work in the
             areas of heritage awareness, archiving and
             conservation - Khaki Heritage Foundation. <br>They
             need financial help for their initiatives, and I
