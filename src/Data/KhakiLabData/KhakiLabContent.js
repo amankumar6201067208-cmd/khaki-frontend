@@ -91,7 +91,7 @@ export const bunderRoomData = {
   ],
 
   buttonText: "Booking Request",
-  contactEmail: "khakilab@gmail.com",
+  contactEmail: "khakilabevents@gmail.com",
 
   images: [
     "https://res.cloudinary.com/dsnnuxkfu/image/upload/v1775121281/Bunder_Room_6_gl1urb.png",

@@ -99,6 +99,8 @@ const BunderRoomBookingForm = () => {
         <input
           type="date"
           {...register("bookingDate")}
+          onClick={(e) => e.currentTarget.showPicker?.()}
+          onFocus={(e) => e.currentTarget.showPicker?.()}
           className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
         />
         <p className="text-[#DB4D27] text-xs">{errors.bookingDate?.message}</p>

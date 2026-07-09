@@ -202,6 +202,8 @@ const PrivateTourRequestForm = ({ tour }) => {
           <input
             type="date"
             {...register("preferredDate")}
+            onClick={(e) => e.currentTarget.showPicker?.()}
+            onFocus={(e) => e.currentTarget.showPicker?.()}
             className="border-[#DB4D27] border-b w-full p-2 bg-transparent"
           />
           <p className="text-[#DB4D27] text-sm">
