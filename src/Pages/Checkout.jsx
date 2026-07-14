@@ -459,7 +459,7 @@ const Checkout = () => {
               <br />
               <li>
                 The Company may use Photographs/ Videos taken during the tour
-                for publication on its or third party websites, social medai
+                for publication on its or third party websites, social media
                 platforms and/ or in print advertising and for promotional
                 literature.
               </li>

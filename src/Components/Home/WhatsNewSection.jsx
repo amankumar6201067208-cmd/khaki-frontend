@@ -1,10 +1,7 @@
 import { hasWhatsNewContent } from "../../Data/HomeData/ChangesSection";
 import RichTextRenderer from "../RichTextRenderer";
 
-// `data` is fetched once in Home and passed down (so the parent can also
-// adjust surrounding layout when this section is hidden).
 const WhatsNewSection = ({ data }) => {
-  // Hide the whole section when the backend has no What's New content.
   if (!hasWhatsNewContent(data)) return null;
 
   const paragraphBlocks = Array.isArray(data?.description)
@@ -27,22 +24,22 @@ const WhatsNewSection = ({ data }) => {
           </div>
 
           {/* RIGHT CONTENT */}
-          <div className="text-white leading-8 w-[90%] flex flex-col items-center md:items-start">
-            <p className="md:text-[28px] text-[20px] font-semibold text-center md:text-start">
+          <div className="text-white leading-8 md:w-[70%] w-[90%] flex flex-col items-center md:items-start">
+            <p className="md:text-[28px] text-[22px] font-semibold text-center md:text-start">
               {data.tag}
             </p>
 
-            <h2 className="md:text-[28px] text-[20px] text-center md:text-start font-bold ">
+            <h2 className=" text-[20px] text-center md:text-start font-bold ">
               {data.title}
             </h2>
 
             {paragraphBlocks ? (
               <RichTextRenderer
                 nodes={paragraphBlocks}
-                className="leading-6 text-white/90 mt-5 text-center md:text-start"
+                className="text-[18px] text-white mt-5 text-center md:text-start"
               />
             ) : (
-              <p className=" leading-6 text-white/90 mt-5 text-center md:text-start ">
+              <p className="text-[18px] text-white mt-5 text-center md:text-start ">
                 {data.description}
               </p>
             )}

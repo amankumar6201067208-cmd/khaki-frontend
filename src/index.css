@@ -121,3 +121,19 @@ input[type="date"]::-webkit-clear-button {
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out;
 }
+
+#CDSWIDCOELOGO{
+  height:90px;
+}
+
+#CDSWIDCOE {
+    width: 80px !important;
+}
+
+#CDSRATINGWIDGET322{
+  height: 335pcx !important;
+}
+
+#CDSROWRATING322{
+  padding-left:22px !important;
+}

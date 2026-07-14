@@ -98,6 +98,8 @@ const PrivateTourRequestForm = ({ tour }) => {
       otherRequest: data.otherRequest,
       totalAmount,
       tourName: data.tourName,
+      // Schema attribute is lowercase "tourslug"; value comes from the tour.
+      tourslug: tour?.slug,
     };
 
     try {
@@ -440,7 +442,7 @@ const PrivateTourRequestForm = ({ tour }) => {
               <br />
               <li>
                 The Company may use Photographs/ Videos taken during the tour
-                for publication on its or third party websites, social medai
+                for publication on its or third party websites, social media
                 platforms and/ or in print advertising and for promotional
                 literature.
               </li>

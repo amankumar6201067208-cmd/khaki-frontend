@@ -30,8 +30,6 @@ const KhakiLibrarySection = () => {
             {buttonText}
           </Link> */}
 
-          {/* Library Search — matches the original Librarika horizontal
-              widget, but submits straight to the results page in a new tab. */}
           <form
             action="https://khakilab.librarika.com/search"
             method="get"
