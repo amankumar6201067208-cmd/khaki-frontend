@@ -9,10 +9,6 @@ const TripCard = ({ trip }) => {
 
   const link = `${routeMap[trip.tourType] || "/tours"}/${trip.slug}`;
 
-  // priceType controls how the price is labelled:
-  //   "from"     → prefix, e.g.  "From ₹ 4999/-"   (private tours)
-  //   any other  → suffix, e.g.  "₹ 599/- pp"      (e.g. priceType "pp")
-  //   empty      → plain,  e.g.  "₹ 999/-"
   const priceType = (trip.priceType || "").trim();
   const priceLabel =
     priceType.toLowerCase() === "from"

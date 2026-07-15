@@ -1,6 +1,5 @@
 import { mediaUrl } from "../api/strapi";
 
-// Inline node: a text leaf with marks, or a link
 const renderLeaf = (node, key) => {
   // Link node — render an <a> with its (formatted) children inside
   if (node.type === "link") {

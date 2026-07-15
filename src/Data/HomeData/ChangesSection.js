@@ -26,8 +26,6 @@ export const getHomePage = async () => {
   }
 };
 
-// True only when the What's New section actually has something to show.
-// Paragraph is a rich-text (blocks) field, so check for real text inside it.
 export const hasWhatsNewContent = (data) => {
   if (!data) return false;
   const blocks = Array.isArray(data.description) ? data.description : null;

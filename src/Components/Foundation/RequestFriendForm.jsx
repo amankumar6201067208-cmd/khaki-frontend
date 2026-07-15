@@ -55,7 +55,7 @@ const RequestFriendForm = () => {
       console.error("ERROR →", error.response?.data);
       alert(
         error.response?.data?.error?.message ||
-        "Something went wrong ❌"
+        "Something went wrong "
       );
     } finally {
       setLoading(false);

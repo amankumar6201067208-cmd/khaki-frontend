@@ -13,7 +13,7 @@ const NewsCard = ({ logo, title, link, date }) => {
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="block text-[16px] text-black font-[600] hover:text-[#e4572e] transition"
+        className="block text-[16px] text-black font-semibold hover:text-[#e4572e] transition"
       >
         {title} →
       </a>

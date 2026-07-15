@@ -8,8 +8,7 @@ const TripsByCategory = ({
   icon,
   trips,
 }) => {
-  // Order within each category by publishDate (latest first), falling back to
-  // Strapi's publishedAt when no manual publishDate is set.
+
   const publishOrder = (t) =>
     new Date(t.publishDate || t.publishedAt || 0).getTime();
 

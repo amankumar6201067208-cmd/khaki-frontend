@@ -122,7 +122,7 @@ const GroupTourDetail = () => {
             />
           </div>
 
-          {/* ✅ key prop se calendar completely re-mount hoga jab fresh data aayega */}
+          {/* key prop se calendar completely re-mount hoga jab fresh data aayega */}
           <GroupTourCalendar
             key={calendarKey}
             schedule={tour.schedule}

@@ -41,7 +41,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
 
   const participants = useWatch({ control, name: "participants" });
 
-  // ─── Total amount (flat price per ticket; events have no discount) ──────────
+  // Total amount (flat price per ticket; events have no discount) 
   const totalAmount = useMemo(() => {
     if (!participants || participants.length === 0) return 0;
     return participants.reduce((total, p) => {
@@ -50,7 +50,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     }, 0);
   }, [participants, tour.price]);
 
-  // ─── Primary participant validation ────────────────────────────────────────
+  // Primary participant validation 
   const isParticipantValid = (index) => {
     const p = participants?.[index];
     return (
@@ -59,7 +59,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     );
   };
 
-  // ─── Ticket quantity ───────────────────────────────────────────────────────
+  // Ticket quantity 
   const ticketCount = fields.length;
 
   const setTickets = (next) => {
@@ -78,7 +78,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     }
   };
 
-  // ─── PayU form submit ─────────────────────────────────────────────────────
+  // PayU form submit 
   const payWithPayU = (data) => {
     const form = document.createElement("form");
     form.method = "POST";
@@ -110,7 +110,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     form.submit();
   };
 
-  // ─── Main submit ──────────────────────────────────────────────────────────
+  // Main submit 
   const onSubmit = async (data) => {
     if (!isParticipantValid(0)) return;
 

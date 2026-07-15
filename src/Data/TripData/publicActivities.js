@@ -56,8 +56,6 @@ const formatActivity = (trip) => {
   };
 };
 
-// Fetch every page — Strapi returns only 25 records by default, so without
-// this a growing list of walks/events would silently drop the newest ones.
 const PAGE_SIZE = 100;
 
 export const getPublicActivities = async () => {

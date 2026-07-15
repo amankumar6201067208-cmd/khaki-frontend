@@ -5,11 +5,7 @@ import { getPublicActivities } from "../Data/TripData/publicActivities";
 import TripSlider from "../Components/Home/TripSlider";
 import PublicTabSection from "../Components/Home/PublicTabSection";
 import WhatsNewSection from "../Components/Home/WhatsNewSection";
-import {
-  getInternationalImage,
-  getHomePage,
-  hasWhatsNewContent,
-} from "../Data/HomeData/ChangesSection";
+import { getInternationalImage, getHomePage, hasWhatsNewContent, } from "../Data/HomeData/ChangesSection";
 import AmbassadorsSection from "../Components/Home/AmbassadorsSection";
 import GuestReviewsCarousel from "../Components/Home/GuestReviewsCarousel";
 import KhakiInNewsCarousel from "../Components/Home/KhakiInNewsCarousel";
@@ -45,8 +41,6 @@ const Home = () => {
     loadWhatsNew();
   }, []);
 
-  // Whether the What's New section will render — used to drop the reserved
-  // (fixed-height) space above it when there's nothing to show.
   const showWhatsNew = hasWhatsNewContent(whatsNew);
 
   useEffect(() => {

@@ -15,7 +15,11 @@ const GuestReviewsCarousel = () => {
     <section className="bg-[url('/src/assets/Background/snow2.png')] py-16">
       <div className="max-w-285 mx-auto px-6 text-center flex flex-col items-center">
         {/* Travellers' Choice widget */}
-        <TripadvisorWidget html={COE_HTML} scriptSrc={COE_SRC} className="mb-6" />
+        <TripadvisorWidget
+          html={COE_HTML}
+          scriptSrc={COE_SRC}
+          className="mb-6"
+        />
 
         {/* Heading */}
         <h2 className="text-[30px] font-bold text-[#DB4D27] mb-6 max-w-2xl">
