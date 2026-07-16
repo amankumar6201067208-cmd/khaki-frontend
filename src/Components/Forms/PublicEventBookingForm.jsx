@@ -6,7 +6,6 @@ import { STRAPI_BASE_URL } from "../../api/strapi";
 
 const BACKEND_URL = STRAPI_BASE_URL;
 
-// A brand-new extra ticket: only a category is needed (defaults to general).
 const newExtraTicket = () => ({
   name: "",
   email: "",
@@ -41,20 +40,20 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
 
   const participants = useWatch({ control, name: "participants" });
 
-  // Total amount (flat price per ticket; events have no discount) 
+  // Every ticket's category must be chosen before we price / allow submit.
+  const allCategoriesSelected =
+    participants?.length > 0 && participants.every((p) => p?.category);
+    
   const totalAmount = useMemo(() => {
-    if (!participants || participants.length === 0) return 0;
-    return participants.reduce((total, p) => {
-      if (!p?.category) return total;
-      return total + (Number(tour.price) || 0);
-    }, 0);
-  }, [participants, tour.price]);
+    if (!allCategoriesSelected) return 0;
+    return participants.length * (Number(tour.price) || 0);
+  }, [participants, tour.price, allCategoriesSelected]);
 
   // Primary participant validation 
   const isParticipantValid = (index) => {
     const p = participants?.[index];
     return (
-      p?.name && p?.email && p?.phone && p?.category &&
+      p?.name && p?.email && p?.phone && p?.countryCode && p?.category &&
       !errors?.participants?.[index]
     );
   };
@@ -110,9 +109,12 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
     form.submit();
   };
 
-  // Main submit 
+  // Main submit
   const onSubmit = async (data) => {
     if (!isParticipantValid(0)) return;
+
+    // Every ticket must have a category (free events are allowed at ₹0).
+    if (!allCategoriesSelected) return;
 
     if (data.participants.length > availableSeats) {
       setLimitError("Seat limit exceeded");
@@ -135,6 +137,7 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
           name: firstParticipant.name,
           email: firstParticipant.email,
           phone: firstParticipant.phone,
+          countryCode: firstParticipant.countryCode,
         },
 
         passengers: data.participants,
@@ -275,13 +278,21 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
                 </div>
 
                 <div>
-                  <input
-                    {...register(`participants.${index}.phone`)}
-                    placeholder="Phone"
-                    className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      {...register(`participants.${index}.countryCode`)}
+                      placeholder="+91"
+                      className="border-b border-[#DB4D27] w-14 p-2 bg-transparent"
+                    />
+                    <input
+                      {...register(`participants.${index}.phone`)}
+                      placeholder="Phone"
+                      className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
+                    />
+                  </div>
                   <p className="text-[#DB4D27] text-xs">
-                    {errors?.participants?.[index]?.phone?.message}
+                    {errors?.participants?.[index]?.countryCode?.message ||
+                      errors?.participants?.[index]?.phone?.message}
                   </p>
                 </div>
 
@@ -363,16 +374,24 @@ const PublicEventBookingForm = ({ tour, selectedSlot }) => {
       <div className="text-lg font-bold text-[#DB4D27]">
         Total Amount: ₹ {totalAmount}
       </div>
+      {!allCategoriesSelected && (
+        <p className="text-sm text-gray-600 -mt-4">
+          Please select the Primary Contact&apos;s category to continue.
+        </p>
+      )}
 
       {/* Action buttons */}
       <div className="flex gap-4">
         <button
           type="submit"
-          disabled={!isParticipantValid(0) || isSubmitting}
+          disabled={
+            !isParticipantValid(0) || isSubmitting || !allCategoriesSelected
+          }
           className={`px-6 py-2 rounded transition
-            ${!isParticipantValid(0) || isSubmitting
-              ? "bg-gray-400 cursor-not-allowed text-white"
-              : "bg-[#DB4D27] text-white cursor-pointer hover:bg-[#c44421]"
+            ${
+              !isParticipantValid(0) || isSubmitting || !allCategoriesSelected
+                ? "bg-gray-400 cursor-not-allowed text-white"
+                : "bg-[#DB4D27] text-white cursor-pointer hover:bg-[#c44421]"
             }`}
         >
           {isSubmitting ? "Processing..." : "Submit & Continue"}

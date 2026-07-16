@@ -34,6 +34,17 @@ export const publicWalkBookingSchema = yup.object({
             return isPrimary(this) ? !!value : true;
           }),
 
+        countryCode: yup
+          .string()
+          .trim()
+          .test(
+            "primary-countryCode",
+            "Country code is required",
+            function (value) {
+              return isPrimary(this) ? !!value : true;
+            },
+          ),
+
         category: yup
           .string()
           .oneOf(["general", "senior", "student"], "Invalid category")

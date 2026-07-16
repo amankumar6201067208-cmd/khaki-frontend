@@ -32,13 +32,15 @@ const TripCard = ({ trip }) => {
             #{trip.title} ({trip.duration})
           </h3>
 
-          <div className="grid grid-cols-2 items-center mt-2 gap-5">
-            <div className="bg-[#db4d15] p-1.25 text-center w-[85%]">
-              <span className="text-white text-xs px-2 py-1">• {trip.tag}</span>
+          <div className="flex items-center justify-between mt-2 gap-2">
+            <div className="bg-[#db4d15] p-1.25 text-start shrink-0">
+              <span className="text-white text-xs px-2 py-1 whitespace-nowrap">
+                • {trip.tag}
+              </span>
             </div>
 
             <div className="flex justify-end pr-3">
-              <span className="font-bold text-[17px]">
+              <span className="font-bold text-[17px] whitespace-nowrap">
                 {priceLabel}
               </span>
             </div>

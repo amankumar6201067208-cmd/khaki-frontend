@@ -16,6 +16,8 @@ export const privateTourSchema = yup.object().shape({
 
   country: yup.string().required("Country is required"),
 
+  countryCode: yup.string().trim().required("Country code is required"),
+
   preferredDate: yup.string().required("Date is required"),
 
   startTime: yup.string().required("Start Time is required"),

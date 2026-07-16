@@ -46,7 +46,7 @@ const Checkout = () => {
         name: "",
         email: "",
         country: "",
-        countryCode: "+91",
+        countryCode: "",
         phone: "",
       },
       passengers: Array.from({ length: tickets }, () => ({
@@ -198,6 +198,7 @@ const Checkout = () => {
               <input
                 {...register("contact.countryCode")}
                 className="w-1/3 border-b p-2"
+                placeholder="+91"
               />
               <input
                 {...register("contact.phone")}
@@ -207,7 +208,8 @@ const Checkout = () => {
             </div>
 
             <p className="text-red-600 text-xs">
-              {errors.contact?.phone?.message}
+              {errors.contact?.countryCode?.message ||
+                errors.contact?.phone?.message}
             </p>
 
             <div>

@@ -18,6 +18,7 @@ const GuestReviewsCarousel = () => {
         <TripadvisorWidget
           html={COE_HTML}
           scriptSrc={COE_SRC}
+          scale={0.5}
           className="mb-6"
         />
 
@@ -27,7 +28,11 @@ const GuestReviewsCarousel = () => {
         </h2>
 
         {/* Ratings-only widget */}
-        <TripadvisorWidget html={RATINGS_HTML} scriptSrc={RATINGS_SRC} />
+        <TripadvisorWidget
+          html={RATINGS_HTML}
+          scriptSrc={RATINGS_SRC}
+          scale={0.75}
+        />
       </div>
     </section>
   );

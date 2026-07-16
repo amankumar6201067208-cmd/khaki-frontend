@@ -40,17 +40,11 @@ const PublicRow = ({ item }) => {
             </p>
           )}
 
-          {/* Offline event → same format as walks (Time | Duration | Venue) */}
-          {item.type === "event" && item.eventType === "Ofline" && (
+          {/* All events (offline + online/talk) use the same format:
+              Time | Duration | Venue */}
+          {item.type === "event" && (
             <p className="text-[#231F20] text-[12px] font-semibold">
               Time: {item.time} | {item.duration} | Venue: {item.venue}
-            </p>
-          )}
-
-          {/* Online event (talk) → unchanged */}
-          {item.type === "event" && item.eventType !== "Ofline" && (
-            <p className="text-[#231F20] text-[12px] font-semibold">
-              Venue: {item.venue} ({item.time})
             </p>
           )}
         </div>

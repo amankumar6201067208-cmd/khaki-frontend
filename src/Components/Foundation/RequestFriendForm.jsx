@@ -135,7 +135,7 @@ const RequestFriendForm = () => {
             Message:
           </label>
           <p className="requestformanchor">
-            Hi! Support an NGO that's doing good work in the
+            Support an NGO that's doing good work in the
             areas of heritage awareness, archiving and
             conservation - Khaki Heritage Foundation. They
             need financial help for their initiatives, and I

@@ -8,7 +8,7 @@ import { STRAPI_BASE_URL } from "../../api/strapi";
 
 const BACKEND_URL = STRAPI_BASE_URL;
 
-// A brand-new extra ticket: only a category is needed (defaults to general).
+
 const newExtraTicket = () => ({
   name: "",
   email: "",
@@ -65,6 +65,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
     firstParticipant?.name &&
     firstParticipant?.email &&
     firstParticipant?.phone &&
+    firstParticipant?.countryCode &&
     firstParticipant?.category &&
     !errors?.participants?.[0];
 
@@ -103,13 +104,16 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
     return quotaLeftForThis > 0 ? 25 : 0;
   };
 
-  /* TOTAL AMOUNT — fetch from backend so discountUsedCount is always fresh */
+  
   useEffect(() => {
-    const allFilled = participants?.every((p) => p?.category);
-    if (!participants || participants.length === 0 || !allFilled) {
+    const allFilled =
+      participants?.length > 0 && participants.every((p) => p?.category);
+    if (!allFilled) {
       setTotalAmount(0);
       return;
     }
+
+    let cancelled = false;
 
     const calculate = async () => {
       setIsCalculating(true);
@@ -126,6 +130,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
           }),
         });
         const data = await res.json();
+        if (cancelled) return;
         if (data?.totalAmount !== undefined) {
           setTotalAmount(data.totalAmount);
         }
@@ -134,6 +139,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
           setRemainingDiscountQuota(data.remainingDiscountQuota);
         }
       } catch {
+        if (cancelled) return;
         // Fallback to local calculation if backend fails
         const fallback = participants.reduce((total, p, idx) => {
           if (!p?.category) return total;
@@ -143,11 +149,15 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
         }, 0);
         setTotalAmount(fallback);
       } finally {
-        setIsCalculating(false);
+        if (!cancelled) setIsCalculating(false);
       }
     };
 
     calculate();
+
+    return () => {
+      cancelled = true;
+    };
   }, [participants, tour.price, selectedSlot?.time]);
 
   // PayU redirect
@@ -208,6 +218,7 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
           name: firstParticipant.name,
           email: firstParticipant.email,
           phone: firstParticipant.phone,
+          countryCode: firstParticipant.countryCode,
         },
 
         passengers: data.participants,
@@ -349,15 +360,23 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
                   </p>
                 </div>
 
-                {/* PHONE */}
+                {/* COUNTRY CODE + PHONE */}
                 <div>
-                  <input
-                    {...register(`participants.${index}.phone`)}
-                    placeholder="Phone"
-                    className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      {...register(`participants.${index}.countryCode`)}
+                      placeholder="+91"
+                      className="border-b border-[#DB4D27] w-14 p-2 bg-transparent"
+                    />
+                    <input
+                      {...register(`participants.${index}.phone`)}
+                      placeholder="Phone"
+                      className="border-b border-[#DB4D27] w-full p-2 bg-transparent"
+                    />
+                  </div>
                   <p className="text-[#DB4D27] text-xs">
-                    {errors?.participants?.[index]?.phone?.message}
+                    {errors?.participants?.[index]?.countryCode?.message ||
+                      errors?.participants?.[index]?.phone?.message}
                   </p>
                 </div>
 
@@ -444,7 +463,9 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
                 <p className="text-xs text-gray-600">
                   {getDiscountPercent(participant.category, index) > 0
                     ? "25% discount applied"
-                    : "No discounted seats available"}
+                    : participant.category
+                      ? "No discounted seats available"
+                      : ""}
                 </p>
               </div>
             </div>
@@ -459,6 +480,12 @@ const PublicWalkBookingForm = ({ tour, selectedSlot }) => {
       <div className="text-lg font-bold text-[#DB4D27]">
         Total Amount: {isCalculating ? "Calculating..." : `₹ ${totalAmount}`}
       </div>
+      {totalAmount === 0 && !isCalculating && (
+        <p className="text-sm text-gray-600 -mt-4">
+          Please select the Primary Contact&apos;s category to see the total
+          amount.
+        </p>
+      )}
 
       {/* TERMS & CONDITIONS — required before payment */}
       <div>

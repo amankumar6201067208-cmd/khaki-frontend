@@ -66,7 +66,7 @@ const PrivateTourDetail = () => {
 
             <p className="font-semibold mt-2 text-[24px]">
               INR {tour.price} /-
-              <span className="text-[20px]"> Onward</span>
+              <span className="text-[20px]"> Onwards</span>
             </p>
 
             {/* Description */}
